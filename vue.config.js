@@ -3,11 +3,11 @@ module.exports = defineConfig({
     transpileDependencies: true,
     lintOnSave: process.env.NODE_ENV !== 'production',
     devServer: {
-        client : {
+        client: {
             overlay: {
                 warnings: true,
-                errors: true
-            }
-        }
-    }
+                errors: true,
+            },
+        },
+    },
 });

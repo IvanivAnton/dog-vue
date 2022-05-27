@@ -1,18 +1,42 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-  </div>
+    <div class="home">
+        <div>
+            <label>
+                Sort
+                <input
+                    type="checkbox"
+                    @click="sortHandlerClick"
+                    v-model="sort"
+                />
+            </label>
+        </div>
+        <DogsList />
+    </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+import { defineComponent } from 'vue';
+import { useStore } from 'vuex';
 
-@Options({
-  components: {
-    HelloWorld,
-  },
-})
-export default class HomeView extends Vue {}
+import DogsList from '@/components/DogsList.vue';
+
+export default defineComponent({
+    components: { DogsList },
+    setup() {
+        const store = useStore();
+        const sort = false;
+
+        function sortHandlerClick() {
+            console.log(sort);
+            if (sort) {
+                store.dispatch('toEmptyDogs');
+            }
+        }
+
+        return {
+            sortHandlerClick,
+            sort,
+        };
+    },
+});
 </script>

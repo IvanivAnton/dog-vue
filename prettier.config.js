@@ -4,5 +4,7 @@ module.exports = {
     arrowParens: 'avoid',
     trailingComma: 'es5',
     endOfLine: 'auto',
+    tabWidth: 4,
+    useTabs: false,
     htmlFormatWrapAttributes: 'force-aligned',
 };
