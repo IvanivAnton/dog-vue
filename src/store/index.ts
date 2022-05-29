@@ -6,7 +6,6 @@ import axios from 'axios';
 
 export default createStore<IState>({
     state: {
-        dogsUrls: [],
         dogsBlobs: [],
     },
     getters: {
@@ -16,7 +15,9 @@ export default createStore<IState>({
     },
     mutations: {
         setRandomDogs(state, { dogs }) {
-            state.dogsUrls = state.dogsUrls.concat(dogs);
+            let dogsUrls: string[] = [];
+            dogsUrls = dogsUrls.concat(dogs);
+
             for (const dogsKey in dogs) {
                 axios
                     .get(dogs[dogsKey], { responseType: 'blob' })
@@ -24,16 +25,19 @@ export default createStore<IState>({
                         const reader = new window.FileReader();
                         reader.readAsDataURL(response.data);
                         reader.onload = function () {
-                            const imageDataUrl = reader.result;
-                            if (imageDataUrl) {
-                                state.dogsBlobs.push(imageDataUrl.toString());
+                            const base64image = reader.result;
+                            if (base64image) {
+                                state.dogsBlobs.push({
+                                    url: dogs[dogsKey],
+                                    image: base64image.toString(),
+                                });
                             }
                         };
                     });
             }
         },
         toEmptyDogs(state) {
-            state.dogsUrls = [];
+            state.dogsBlobs = [];
         },
     },
     actions: {

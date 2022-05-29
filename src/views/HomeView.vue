@@ -10,12 +10,12 @@
                 />
             </label>
         </div>
-        <DogsList />
+        <DogsList :sort="sort" />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex';
 
 import DogsList from '@/components/DogsList.vue';
@@ -24,11 +24,10 @@ export default defineComponent({
     components: { DogsList },
     setup() {
         const store = useStore();
-        const sort = false;
+        const sort = ref(false);
 
         function sortHandlerClick() {
-            console.log(sort);
-            if (sort) {
+            if (sort.value) {
                 store.dispatch('toEmptyDogs');
             }
         }

@@ -1,4 +1,8 @@
 export interface IState {
-    dogsUrls: string[];
-    dogsBlobs: string[];
+    dogsBlobs: [
+        {
+            url: string;
+            image: string;
+        }?
+    ];
 }

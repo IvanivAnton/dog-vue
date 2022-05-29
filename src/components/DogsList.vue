@@ -7,40 +7,43 @@
 </template>
 
 <script>
-import { computed, defineComponent, onMounted, onUnmounted } from 'vue';
+import {
+    computed,
+    defineComponent,
+    onMounted,
+    onUnmounted,
+    defineProps,
+} from 'vue';
 import { useStore } from 'vuex';
 import { debounce } from '@/utils';
 
 export default defineComponent({
     setup() {
-        const urlCreator = window.URL || window.webkitURL;
+        const props = defineProps({
+            sort: Boolean,
+        });
+
         const store = useStore();
 
         const dogs = computed(() => {
             return store.getters.getDogs;
         });
-        const sort = false;
 
         function getMoreDogs() {
-            store.dispatch('getRandomDogs');
+            store.dispatch('getRandomDogs', props.sort);
         }
+
         function scrollHandler() {
             const target = document.body;
             if (target) {
-                const offetYOpposite =
+                const offsetYOpposite =
                     target.scrollHeight -
                     window.scrollY -
                     window.screenTop * 2 -
                     window.innerHeight;
-                if (offetYOpposite < 300) {
+                if (offsetYOpposite < 300) {
                     getMoreDogs();
                 }
-            }
-        }
-        function sortHandlerClick() {
-            console.log(sort);
-            if (sort) {
-                store.dispatch('toEmptyDogs');
             }
         }
 
@@ -60,9 +63,6 @@ export default defineComponent({
 
         return {
             dogs,
-            sortHandlerClick,
-            sort,
-            urlCreator,
         };
     },
 });
