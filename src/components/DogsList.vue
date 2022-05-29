@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <div v-for="(dogImageBlob, index) in dogs" :key="index">
-            <img class="item" :src="dogImageBlob" alt="dog" />
+            <img class="item" :src="dogImageBlob.image" alt="dog" />
         </div>
     </div>
 </template>
@@ -12,16 +12,16 @@ import {
     defineComponent,
     onMounted,
     onUnmounted,
-    defineProps,
+    // defineProps,
 } from 'vue';
 import { useStore } from 'vuex';
 import { debounce } from '@/utils';
 
 export default defineComponent({
     setup() {
-        const props = defineProps({
-            sort: Boolean,
-        });
+        // const props = defineProps({
+        //     sort: Boolean,
+        // });
 
         const store = useStore();
 
@@ -30,7 +30,7 @@ export default defineComponent({
         });
 
         function getMoreDogs() {
-            store.dispatch('getRandomDogs', props.sort);
+            store.dispatch('getRandomDogs', false);
         }
 
         function scrollHandler() {
