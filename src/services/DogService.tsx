@@ -18,14 +18,12 @@ class DogService {
 
     public getRandomDogsByBreed(breed: string): Promise<DogResponseData> {
         return axios.get(
-            `${this.API_URL}/${breed}/image/random/${this.dogsLimit}`
+            `${this.API_URL}/breed/${breed}/images/random/${this.dogsLimit}`
         );
     }
 
-    public getBreedList(): Promise<DogResponseData> {
-        return axios.get(
-            `${this.API_URL}/${breed}/image/random/${this.dogsLimit}`
-        );
+    public getBreedsList(): Promise<DogResponseData> {
+        return axios.get(`${this.API_URL}/breeds/list`);
     }
 }
 

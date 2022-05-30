@@ -22,19 +22,35 @@ import { ref } from 'vue';
 export default defineComponent({
     setup() {
         const store = useStore();
-        const sort = ref(false);
+        const sort = ref(store.getters.getSort);
 
         const dogs = computed(() => {
             return store.getters.getDogs;
         });
 
+        const breeds = computed(() => {
+            return store.getters.getBreeds;
+        });
+
         function getMoreDogs() {
-            store.dispatch('getRandomDogs', sort);
+            if (sort.value) {
+                store.dispatch('getRandomDogsByCurrentBreed');
+            } else {
+                store.dispatch('getRandomDogs');
+            }
         }
 
         function sortHandlerClick() {
-            store.dispatch('toEmptyDogs');
-            getMoreDogs();
+            store.dispatch('switchSort', sort);
+            if (breeds.value.length === 0) {
+                const promise = store.dispatch('getBreedsList');
+                promise.then(() => {
+                    store.dispatch('nextBreed');
+                    getMoreDogs();
+                });
+            } else {
+                getMoreDogs();
+            }
         }
 
         function scrollHandler() {

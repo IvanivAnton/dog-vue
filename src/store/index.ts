@@ -6,15 +6,27 @@ import axios from 'axios';
 
 export default createStore<IState>({
     state: {
-        dogsBlobs: [],
+        dogs: [],
+        breeds: [],
+        sort: false,
+        currentBreed: -1,
     },
     getters: {
         getDogs(state) {
-            return state.dogsBlobs;
+            return state.dogs;
+        },
+        getBreeds(state): string[] {
+            return state.breeds;
+        },
+        getSort(state): boolean {
+            return state.sort;
+        },
+        getCurrentBreed(state): number {
+            return state.currentBreed;
         },
     },
     mutations: {
-        setRandomDogs(state, { dogs }) {
+        setDogs(state, { dogs }) {
             // https://images.dog.ceo/breeds/finnish-lapphund/mochilamvan.jpg
             for (const dogsKey in dogs) {
                 axios
@@ -25,7 +37,7 @@ export default createStore<IState>({
                         reader.onload = function () {
                             const base64image = reader.result;
                             if (base64image) {
-                                state.dogsBlobs.push({
+                                state.dogs.push({
                                     name: dogs[dogsKey].split('/')[4],
                                     url: dogs[dogsKey],
                                     image: base64image.toString(),
@@ -35,18 +47,31 @@ export default createStore<IState>({
                     });
             }
         },
+        setBreedsList(state, { breeds }) {
+            state.breeds = breeds;
+        },
         toEmptyDogs(state) {
-            state.dogsBlobs = [];
+            state.dogs = [];
+        },
+        switchSort(state, { sort }) {
+            state.sort = sort;
+        },
+        nextBreed(state) {
+            if (state.currentBreed === -1) {
+                state.currentBreed = 0;
+            } else {
+                ++state.currentBreed;
+            }
         },
     },
     actions: {
         getRandomDogs({ commit }) {
             let dogs: string[] = [];
-            DogService.getRandomDogs()
+            return DogService.getRandomDogs()
                 .then((response: DogResponseData) => {
                     if (response.data.status == 'success') {
                         dogs = response.data.message;
-                        commit('setRandomDogs', { dogs });
+                        commit('setDogs', { dogs });
                     } else {
                         console.error(response);
                     }
@@ -55,8 +80,43 @@ export default createStore<IState>({
                     console.error(reason);
                 });
         },
-        toEmptyDogs({ commit }) {
+        getBreedsList({ commit }) {
+            return DogService.getBreedsList()
+                .then((response: DogResponseData) => {
+                    if (response.data.status == 'success') {
+                        const breeds = response.data.message;
+                        commit('setBreedsList', { breeds });
+                    } else {
+                        console.error(response);
+                    }
+                })
+                .catch(reason => {
+                    console.error(reason);
+                });
+        },
+        switchSort({ commit }, sort: boolean) {
             commit('toEmptyDogs');
+            commit('switchSort', { sort });
+        },
+        nextBreed({ commit }) {
+            commit('nextBreed');
+        },
+        getRandomDogsByCurrentBreed({ state, commit }) {
+            let dogs: string[] = [];
+            const breed: string = state.breeds[state.currentBreed];
+            return DogService.getRandomDogsByBreed(breed)
+                .then((response: DogResponseData) => {
+                    if (response.data.status == 'success') {
+                        dogs = response.data.message;
+                        commit('setDogs', { dogs });
+                        commit('nextBreed');
+                    } else {
+                        console.error(response);
+                    }
+                })
+                .catch(reason => {
+                    console.error(reason);
+                });
         },
     },
     modules: {},
