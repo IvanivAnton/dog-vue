@@ -15,6 +15,18 @@ class DogService {
             `${this.API_URL}/breeds/image/random/${this.dogsLimit}`
         );
     }
+
+    public getRandomDogsByBreed(breed: string): Promise<DogResponseData> {
+        return axios.get(
+            `${this.API_URL}/${breed}/image/random/${this.dogsLimit}`
+        );
+    }
+
+    public getBreedList(): Promise<DogResponseData> {
+        return axios.get(
+            `${this.API_URL}/${breed}/image/random/${this.dogsLimit}`
+        );
+    }
 }
 
 export default new DogService();

@@ -1,36 +1,40 @@
 <template>
+    <div>
+        <label>
+            Sort
+            <input type="checkbox" @click="sortHandlerClick" v-model="sort" />
+        </label>
+    </div>
     <div class="wrapper">
         <div v-for="(dogImageBlob, index) in dogs" :key="index">
+            <span>{{ dogImageBlob.name }}</span>
             <img class="item" :src="dogImageBlob.image" alt="dog" />
         </div>
     </div>
 </template>
 
 <script>
-import {
-    computed,
-    defineComponent,
-    onMounted,
-    onUnmounted,
-    // defineProps,
-} from 'vue';
+import { computed, defineComponent, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { debounce } from '@/utils';
+import { ref } from 'vue';
 
 export default defineComponent({
     setup() {
-        // const props = defineProps({
-        //     sort: Boolean,
-        // });
-
         const store = useStore();
+        const sort = ref(false);
 
         const dogs = computed(() => {
             return store.getters.getDogs;
         });
 
         function getMoreDogs() {
-            store.dispatch('getRandomDogs', false);
+            store.dispatch('getRandomDogs', sort);
+        }
+
+        function sortHandlerClick() {
+            store.dispatch('toEmptyDogs');
+            getMoreDogs();
         }
 
         function scrollHandler() {
@@ -63,6 +67,8 @@ export default defineComponent({
 
         return {
             dogs,
+            sort,
+            sortHandlerClick,
         };
     },
 });

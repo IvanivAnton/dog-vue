@@ -15,9 +15,7 @@ export default createStore<IState>({
     },
     mutations: {
         setRandomDogs(state, { dogs }) {
-            let dogsUrls: string[] = [];
-            dogsUrls = dogsUrls.concat(dogs);
-
+            // https://images.dog.ceo/breeds/finnish-lapphund/mochilamvan.jpg
             for (const dogsKey in dogs) {
                 axios
                     .get(dogs[dogsKey], { responseType: 'blob' })
@@ -28,6 +26,7 @@ export default createStore<IState>({
                             const base64image = reader.result;
                             if (base64image) {
                                 state.dogsBlobs.push({
+                                    name: dogs[dogsKey].split('/')[4],
                                     url: dogs[dogsKey],
                                     image: base64image.toString(),
                                 });
@@ -41,13 +40,13 @@ export default createStore<IState>({
         },
     },
     actions: {
-        getRandomDogs({ commit }, sort: boolean) {
+        getRandomDogs({ commit }) {
             let dogs: string[] = [];
             DogService.getRandomDogs()
                 .then((response: DogResponseData) => {
                     if (response.data.status == 'success') {
                         dogs = response.data.message;
-                        commit('setRandomDogs', { dogs, sort });
+                        commit('setRandomDogs', { dogs });
                     } else {
                         console.error(response);
                     }
