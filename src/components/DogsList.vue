@@ -42,10 +42,9 @@ export default defineComponent({
 
         function sortHandlerClick() {
             store.dispatch('switchSort', sort);
-            if (breeds.value.length === 0) {
+            if (!breeds.value || breeds.value.length === 0) {
                 const promise = store.dispatch('getBreedsList');
                 promise.then(() => {
-                    store.dispatch('nextBreed');
                     getMoreDogs();
                 });
             } else {
@@ -61,7 +60,7 @@ export default defineComponent({
                     window.scrollY -
                     window.screenTop * 2 -
                     window.innerHeight;
-                if (offsetYOpposite < 300) {
+                if (offsetYOpposite < 1000) {
                     getMoreDogs();
                 }
             }

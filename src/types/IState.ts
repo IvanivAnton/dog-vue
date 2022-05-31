@@ -6,7 +6,9 @@ export interface IState {
             image: string;
         }?
     ];
-    breeds: string[];
+    breeds?: {
+        value: string[];
+    };
     sort: boolean;
     currentBreed: number;
 }

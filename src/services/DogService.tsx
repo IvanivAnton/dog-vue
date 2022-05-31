@@ -23,7 +23,7 @@ class DogService {
     }
 
     public getBreedsList(): Promise<DogResponseData> {
-        return axios.get(`${this.API_URL}/breeds/list`);
+        return axios.get(`${this.API_URL}/breeds/list/all`);
     }
 }
 

@@ -7,7 +7,7 @@ import axios from 'axios';
 export default createStore<IState>({
     state: {
         dogs: [],
-        breeds: [],
+        breeds: undefined,
         sort: false,
         currentBreed: -1,
     },
@@ -15,7 +15,7 @@ export default createStore<IState>({
         getDogs(state) {
             return state.dogs;
         },
-        getBreeds(state): string[] {
+        getBreeds(state) {
             return state.breeds;
         },
         getSort(state): boolean {
@@ -63,6 +63,9 @@ export default createStore<IState>({
                 ++state.currentBreed;
             }
         },
+        setCurrentBreed(state, { currentBreed }) {
+            state.currentBreed = currentBreed;
+        },
     },
     actions: {
         getRandomDogs({ commit }) {
@@ -95,28 +98,39 @@ export default createStore<IState>({
                 });
         },
         switchSort({ commit }, sort: boolean) {
+            const currentBreed = -1;
             commit('toEmptyDogs');
+            commit('setCurrentBreed', { currentBreed });
             commit('switchSort', { sort });
+            if (sort) {
+                commit('nextBreed');
+            }
         },
         nextBreed({ commit }) {
             commit('nextBreed');
         },
         getRandomDogsByCurrentBreed({ state, commit }) {
             let dogs: string[] = [];
-            const breed: string = state.breeds[state.currentBreed];
-            return DogService.getRandomDogsByBreed(breed)
-                .then((response: DogResponseData) => {
-                    if (response.data.status == 'success') {
-                        dogs = response.data.message;
-                        commit('setDogs', { dogs });
-                        commit('nextBreed');
-                    } else {
-                        console.error(response);
-                    }
-                })
-                .catch(reason => {
-                    console.error(reason);
-                });
+            if (state.breeds) {
+                const currentBreed: string = Object.keys(state.breeds)[
+                    state.currentBreed
+                ];
+
+                // const breed: string = state.breeds[currentBreed];
+                return DogService.getRandomDogsByBreed(currentBreed)
+                    .then((response: DogResponseData) => {
+                        if (response.data.status == 'success') {
+                            dogs = response.data.message;
+                            commit('setDogs', { dogs });
+                            commit('nextBreed');
+                        } else {
+                            console.error(response);
+                        }
+                    })
+                    .catch(reason => {
+                        console.error(reason);
+                    });
+            }
         },
     },
     modules: {},
